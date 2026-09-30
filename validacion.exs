@@ -14,7 +14,7 @@ defmodule Validacion do
   @grasa_max 15
 
   @doc "Días de recepción del centro (1 al 6)."
-  def dias, do: @dia_min..@dia_max # solo arma el range(rango) y lo devuelve
+  def dias, do: @dia_min..@dia_max
 
   @doc """
   Valida una entrega. Devuelve `{:ok, entrega}` o `{:error, motivo}` con el

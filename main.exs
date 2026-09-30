@@ -1,17 +1,21 @@
-# Integrantes: [Nombre 1], [Nombre 2], [Nombre 3]
+# Integrantes: [Sebastian Ballesteros Ruiz], [Kevin Echeverry], [Sebastian Alirio]
 #
-# Programa principal.
+# Programa principal. Ejecutar con:  elixir main.exs
 
-Code.require_file("Datos.exs", __DIR__)
-Code.require_file("Validacion.exs", __DIR__)
-Code.require_file("Liquidacion.exs", __DIR__)
-Code.require_file("Analisis.exs", __DIR__)
-Code.require_file("Reportes.exs", __DIR__)
-Code.require_file("Interaccion.exs", __DIR__)
+Code.require_file("datos.exs", __DIR__)
+Code.require_file("validacion.exs", __DIR__)
+Code.require_file("liquidacion.exs", __DIR__)
+Code.require_file("analisis.exs", __DIR__)
+Code.require_file("reportes.exs", __DIR__)
+Code.require_file("interaccion.exs", __DIR__)
 
 defmodule Main do
   @moduledoc """
-  Orquesta el flujo: cargar, pedir entrega adicional, validar, reportes y comprobante.
+  Modulo principal: orquesta la carga de datos, la entrega adicional, la
+  validacion, los reportes y el comprobante.
+  - Autores: Sebastian Ballesteros Ruiz, Kevin Echeverry, Sebastian Alirio
+  - Fecha: Septiembre 2026
+  - Licencia: GNU GPL v3
   """
 
   def ejecutar do
