@@ -1,8 +1,29 @@
 # Integrantes: [Nombre 1], [Nombre 2], [Nombre 3]
-#
-# Datos del grupo para el parcial 1 (centro de acopio de leche).
-# Incluye entregas con errores intencionales para probar la validación.
+
 defmodule Datos do
+  @moduledoc """
+  Modulo con los datos de prueba del grupo para el centro de acopio.
+  - Autor: [Nombre 1], [Nombre 2], [Nombre 3]
+  - Fecha: Septiembre 2026
+  - Licencia: GNU GPL v3
+
+  Incluye 10 productores (5 con transporte), 4 tanques, entregas en los
+  6 dias, al menos 80 entregas validas y al menos 2 entregas invalidas
+  por cada motivo de rechazo (para probar Validacion.clasificar/3).
+
+  Casos armados a proposito:
+  - P07 tiene un promedio simple de grasa bastante mayor a su promedio
+    ponderado por litros (para la explicacion de R6).
+  - P09 tiene solo 2 entregas validas, por lo que queda fuera de R6
+    (que exige al menos 3).
+  - P10 no tiene ninguna entrega valida, y debe aparecer en R4 con
+    todos sus valores en cero.
+  """
+
+  @doc """
+  Lista de los 10 productores del centro, cada uno con su codigo,
+  nombre y si usa el servicio de transporte.
+  """
   def productores do
     [
       %{codigo: "P01", nombre: "Marta Gómez", transporte: true},
@@ -18,6 +39,10 @@ defmodule Datos do
     ]
   end
 
+  @doc """
+  Lista de los 4 tanques del centro, cada uno con su id, nombre y
+  capacidad nominal en litros.
+  """
   def tanques do
     [
       %{id: "T1", nombre: "Tanque Norte", capacidad: 6000},
@@ -27,6 +52,11 @@ defmodule Datos do
     ]
   end
 
+  @doc """
+  Lista de entregas registradas durante la semana, transcritas de las
+  planillas. Incluye entregas validas e invalidas; la deteccion de
+  errores la hace `Validacion.clasificar/3`, no este modulo.
+  """
   def entregas do
     [
       %{productor: "P01", tanque: "T1", dia: 1, litros: 240, grasa: 3.8},

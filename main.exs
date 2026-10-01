@@ -1,6 +1,7 @@
-# Integrantes: [Sebastian Ballesteros Ruiz], [Kevin Echeverry], [Sebastian Alirio]
+# Integrantes: [Nombre 1], [Nombre 2], [Nombre 3]
 #
 # Programa principal. Ejecutar con:  elixir main.exs
+# (los archivos .exs deben estar en la misma carpeta)
 
 Code.require_file("datos.exs", __DIR__)
 Code.require_file("validacion.exs", __DIR__)
@@ -13,11 +14,16 @@ defmodule Main do
   @moduledoc """
   Modulo principal: orquesta la carga de datos, la entrega adicional, la
   validacion, los reportes y el comprobante.
-  - Autores: Sebastian Ballesteros Ruiz, Kevin Echeverry, Sebastian Alirio
+  - Autor: [Nombre 1], [Nombre 2], [Nombre 3]
   - Fecha: Septiembre 2026
   - Licencia: GNU GPL v3
   """
 
+  @doc """
+  Punto de entrada del programa. Carga los datos, pide la entrega
+  adicional, valida todo, imprime los reportes R1 a R8 y finalmente
+  muestra el comprobante del productor que se indique.
+  """
   def ejecutar do
     productores = Datos.productores()
     tanques = Datos.tanques()
@@ -39,7 +45,9 @@ defmodule Main do
     mostrar_comprobante(liquidaciones)
   end
 
-  # Una sola entrada adicional por ejecución.
+  # Pide la entrega adicional y, si el formato es correcto, la agrega a
+  # la lista de entregas para que se valide junto con las demas. El
+  # programa atiende una sola entrada adicional por ejecucion.
   defp agregar_entrega_adicional(entregas) do
     case Interaccion.pedir_entrega_adicional() do
       :omitir ->
@@ -58,6 +66,8 @@ defmodule Main do
     end
   end
 
+  # Pide el codigo del productor y muestra su comprobante, o avisa si
+  # el codigo no existe, sin que el programa falle.
   defp mostrar_comprobante(liquidaciones) do
     case Interaccion.pedir_codigo_productor() do
       :omitir ->

@@ -1,6 +1,6 @@
 # Integrantes: [Nombre 1], [Nombre 2], [Nombre 3]
 #
-# Parte C (investigación). Ejecutar con:  elixir investigacion.exs
+# Parte C (investigacion). Ejecutar con:  elixir investigacion.exs
 
 Code.require_file("datos.exs", __DIR__)
 Code.require_file("validacion.exs", __DIR__)
@@ -9,6 +9,16 @@ Code.require_file("analisis.exs", __DIR__)
 Code.require_file("reportes.exs", __DIR__)
 
 defmodule Investigacion do
+  @moduledoc """
+  Modulo de la Parte C: demuestra el uso de `ranking/2` con keyword
+  lists, la combinacion de mapas con `Map.merge/3` frente a `Map.merge/2`,
+  y mediciones de tiempo con `:timer.tc/1`.
+  - Autor: [Nombre 1], [Nombre 2], [Nombre 3]
+  - Fecha: Septiembre 2026
+  - Licencia: GNU GPL v3
+  """
+
+  @doc "Punto de entrada: corre las tres partes de la investigacion."
   def ejecutar do
     productores = Datos.productores()
     tanques = Datos.tanques()
@@ -20,6 +30,8 @@ defmodule Investigacion do
     mediciones(productores, tanques)
   end
 
+  # Muestra ranking/2 usado con distintas combinaciones de opciones
+  # (por, orden, limite), para evidenciar el uso de keyword lists.
   defp keyword_lists(liquidaciones) do
     IO.puts("== ranking/2 con keyword lists ==")
 
@@ -30,6 +42,8 @@ defmodule Investigacion do
     IO.puts("2 con menos litros: " <> inspect(Enum.map(menos, &{&1.codigo, &1.litros})))
   end
 
+  # Compara Map.merge/3 (que suma las claves comunes) contra Map.merge/2
+  # (que sobrescribe con el segundo mapa), con el mapa del centro vecino.
   defp merge(validas) do
     IO.puts("\n== Map.merge/3 vs Map.merge/2 ==")
 
@@ -42,7 +56,9 @@ defmodule Investigacion do
     IO.puts("merge/2 (pisa):   " <> inspect(Map.merge(propios, centro_vecino)))
   end
 
-  # Compara buscar códigos en una lista (Enum.member?) contra un MapSet.
+  # Compara el tiempo de buscar codigos/ids en una lista (Enum.member?)
+  # contra un MapSet (MapSet.member?), y mide tambien la validacion
+  # completa, todo con :timer.tc/1.
   defp mediciones(productores, tanques) do
     IO.puts("\n== Mediciones con :timer.tc/1 ==")
 

@@ -1,11 +1,15 @@
 # Integrantes: [Nombre 1], [Nombre 2], [Nombre 3]
-#
-# Módulo de reportes (funciones puras): cada reporte devuelve una lista de
-# líneas de texto. Quien imprime es el programa principal.
 
 defmodule Reportes do
   @moduledoc """
-  Construye el texto de los reportes R1 a R8 y del comprobante del productor.
+  Modulo que arma el texto de los reportes R1 a R8 y del comprobante.
+  - Autor: [Nombre 1], [Nombre 2], [Nombre 3]
+  - Fecha: Septiembre 2026
+  - Licencia: GNU GPL v3
+
+  Cada funcion de reporte devuelve una lista de lineas de texto; quien
+  imprime esas lineas es `Interaccion.imprimir/1`. Asi, este modulo se
+  mantiene puro (sin entrada/salida) y facil de probar.
   """
 
   @motivos [
@@ -18,7 +22,19 @@ defmodule Reportes do
 
   # ---------- Formato ----------
 
-  @doc "Pesos con separador de miles: 1234567 -> \"$1.234.567\"."
+  @doc """
+  Formatea un valor numerico como pesos colombianos, con separador de
+  miles y el simbolo `$` adelante.
+
+  ## Parametro
+  - valor: numero a formatear
+
+  ## Ejemplo
+      iex> Reportes.moneda(1234567)
+      "$1.234.567"
+      iex> Reportes.moneda(-5000)
+      "-$5.000"
+  """
   def moneda(valor) do
     entero = round(valor)
     signo = if entero < 0, do: "-", else: ""
@@ -37,16 +53,47 @@ defmodule Reportes do
     signo <> "$" <> miles
   end
 
+  @doc """
+  Formatea un valor numerico como litros, con 1 decimal.
+
+  ## Ejemplo
+      iex> Reportes.litros(470)
+      "470.0 L"
+  """
   def litros(valor), do: :erlang.float_to_binary(valor * 1.0, decimals: 1) <> " L"
+
+  @doc """
+  Formatea un valor numerico como porcentaje, con 2 decimales.
+
+  ## Ejemplo
+      iex> Reportes.porcentaje(80.5)
+      "80.50 %"
+  """
   def porcentaje(valor), do: :erlang.float_to_binary(valor * 1.0, decimals: 2) <> " %"
 
+  # Arma el encabezado decorativo que comparten todos los reportes.
   defp encabezado(titulo), do: ["", String.duplicate("=", 70), titulo, String.duplicate("=", 70)]
 
+  # Alinea texto a la izquierda, rellenando con espacios a la derecha.
   defp izq(texto, ancho), do: texto |> to_string() |> String.pad_trailing(ancho)
+
+  # Alinea texto a la derecha, rellenando con espacios a la izquierda.
   defp der(texto, ancho), do: texto |> to_string() |> String.pad_leading(ancho)
 
   # ---------- R1 ----------
 
+  @doc """
+  Arma el reporte R1: entregas rechazadas con su motivo, y la cantidad
+  de rechazos por cada motivo.
+
+  ## Parametro
+  - rechazadas: lista de pares `{entrega, motivo}`, devuelta por
+    `Validacion.clasificar/3`
+
+  ## Ejemplo
+      iex> Reportes.r1(rechazadas) |> List.first()
+      ""
+  """
   def r1(rechazadas) do
     detalle =
       case rechazadas do
@@ -73,6 +120,13 @@ defmodule Reportes do
 
   # ---------- R2 ----------
 
+  @doc """
+  Arma el reporte R2: litros y ocupacion de cada tanque, ordenados de
+  mayor a menor porcentaje de ocupacion.
+
+  ## Parametro
+  - ocupacion: lista devuelta por `Analisis.ocupacion_tanques/2`
+  """
   def r2(ocupacion) do
     ordenada = Analisis.ranking(ocupacion, por: :ocupacion, orden: :desc)
 
@@ -87,6 +141,12 @@ defmodule Reportes do
 
   # ---------- R3 ----------
 
+  @doc """
+  Arma el reporte R3: litros recibidos por dia y si se alcanzo la meta.
+
+  ## Parametro
+  - litros_dia: mapa devuelto por `Analisis.litros_por_dia/1`
+  """
   def r3(litros_dia) do
     meta = Analisis.meta_diaria()
     dias = litros_dia |> Map.keys() |> Enum.sort()
@@ -114,6 +174,13 @@ defmodule Reportes do
 
   # ---------- R4 ----------
 
+  @doc """
+  Arma el reporte R4: liquidacion de todos los productores, numerada y
+  ordenada por pago neto de mayor a menor.
+
+  ## Parametro
+  - liquidaciones: lista devuelta por `Liquidacion.liquidar_todos/2`
+  """
   def r4(liquidaciones) do
     ordenadas = Analisis.ranking(liquidaciones, por: :neto, orden: :desc)
 
@@ -133,6 +200,14 @@ defmodule Reportes do
 
   # ---------- R5 ----------
 
+  @doc """
+  Arma el reporte R5: productor con mas litros entregados cada dia (con
+  empates), e indica quien ocupo el primer lugar en mas dias.
+
+  ## Parametros
+  - lideres: lista devuelta por `Analisis.lideres_por_dia/1`
+  - nombres: mapa `codigo => nombre` de los productores
+  """
   def r5(lideres, nombres) do
     filas =
       for {dia, codigos, l} <- lideres do
@@ -162,6 +237,13 @@ defmodule Reportes do
 
   # ---------- R6 ----------
 
+  @doc """
+  Arma el reporte R6: productor con mejor calidad (porcentaje de grasa
+  ponderado por litros), entre quienes tengan al menos 3 entregas validas.
+
+  ## Parametro
+  - calidad: lista devuelta por `Analisis.calidad/2`
+  """
   def r6(calidad) do
     case Analisis.ranking(calidad, por: :ponderado, orden: :desc) do
       [] ->
@@ -183,6 +265,12 @@ defmodule Reportes do
 
   # ---------- R7 ----------
 
+  @doc """
+  Arma el reporte R7: total pagado por el centro y costo promedio por litro.
+
+  ## Parametro
+  - totales: tupla `{total, promedio}` devuelta por `Analisis.totales_pago/1`
+  """
   def r7({total, promedio}) do
     encabezado("R7. TOTAL PAGADO Y COSTO PROMEDIO POR LITRO") ++
       [
@@ -193,6 +281,12 @@ defmodule Reportes do
 
   # ---------- R8 ----------
 
+  @doc """
+  Arma el reporte R8: productores que entregaron en todos los tanques.
+
+  ## Parametro
+  - productores: lista devuelta por `Analisis.en_todos_los_tanques/3`
+  """
   def r8(productores) do
     filas =
       case productores do
@@ -205,6 +299,12 @@ defmodule Reportes do
 
   # ---------- Comprobante ----------
 
+  @doc """
+  Arma el comprobante de un productor: detalle diario, totales y neto a pagar.
+
+  ## Parametro
+  - liquidacion: mapa devuelto por `Liquidacion.liquidar/2`
+  """
   def comprobante(liquidacion) do
     filas =
       case liquidacion.dias do
